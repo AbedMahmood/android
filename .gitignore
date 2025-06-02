@@ -1,0 +1,36 @@
+# Ignore everything in root
+/*
+
+# But NOT the app directory, .gitignore, and project files
+!app/
+!.gitignore
+
+# Ignore build and IDE files in root and app/
+.gradle/
+.idea/
+*.iml
+local.properties
+*.log
+*.DS_Store
+*.jks
+*.keystore
+crashlytics-build.properties
+captures/
+output.json
+*.class
+
+# Ignore build output in app/
+app/.gradle/
+app/build/
+app/*/build/
+app/local.properties
+app/*.log
+app/*.DS_Store
+app/.idea/
+app/*.iml
+app/*.jks
+app/*.keystore
+app/crashlytics-build.properties
+app/captures/
+app/output.json
+app/*.class
