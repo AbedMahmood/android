@@ -1,4 +1,4 @@
-package com.example.myapplication.composables
+package com.example.myapplication.composeables
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
