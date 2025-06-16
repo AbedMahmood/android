@@ -53,10 +53,9 @@ import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.RectangleShape
 
+import androidx.activity.compose.BackHandler // Import BackHandler
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -70,6 +69,24 @@ class MainActivity : ComponentActivity() {
                 var currentScreen by remember { mutableStateOf(Screen.Home) }
                 var showInfoDialog by remember { mutableStateOf(false) }
                 val context = LocalContext.current
+
+                // Handle back press
+                BackHandler(enabled = drawerState.isOpen) {
+                    scope.launch {
+                        drawerState.close()
+                    }
+                }
+
+                BackHandler(enabled = showInfoDialog) {
+                    showInfoDialog = false
+                }
+
+                // Default back handler for screens
+                // This will only be active if the drawer is closed and the info dialog is not shown
+                BackHandler(enabled = currentScreen != Screen.Home && !drawerState.isOpen && !showInfoDialog) {
+                    currentScreen = Screen.Home // Navigate to Home screen
+                }
+
 
                 if (showInfoDialog) {
                     InfoDialog(onDismissRequest = { showInfoDialog = false })
@@ -105,30 +122,21 @@ class MainActivity : ComponentActivity() {
                                         currentScreen = Screen.Home
                                         scope.launch { drawerState.close() }
                                     },
-                                    // Remove Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                                    // Add Modifier.fillMaxWidth() to make the item take the full width
                                     modifier = Modifier.fillMaxWidth(),
                                     shape = RectangleShape,
                                     colors = NavigationDrawerItemDefaults.colors(
-                                        // Keeping your original color choice
                                         selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                                         unselectedContainerColor = Color.Transparent,
-                                        selectedIconColor = MaterialTheme.colorScheme.primary, // Ensure this contrasts with your selectedContainerColor
+                                        selectedIconColor = MaterialTheme.colorScheme.primary,
                                         unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        selectedTextColor = MaterialTheme.colorScheme.primary, // Ensure this contrasts with your selectedContainerColor
+                                        selectedTextColor = MaterialTheme.colorScheme.primary,
                                         unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 )
 
-                                // Add other primary navigation items here if you have them
-
-                                // This Spacer will take up all available vertical space,
-                                // pushing the items below it to the bottom.
                                 Spacer(modifier = Modifier.weight(1f))
 
-                                // Optional: Add a divider before the bottom items
                                 HorizontalDivider()
-                                //Spacer(modifier = Modifier.height(8.dp)) // Optional spacing
 
                                 // Settings Item
                                 NavigationDrawerItem(
@@ -149,21 +157,17 @@ class MainActivity : ComponentActivity() {
                                         currentScreen = Screen.SettingScreen
                                         scope.launch { drawerState.close() }
                                     },
-                                    // Remove Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
-                                    // Add Modifier.fillMaxWidth() to make the item take the full width
                                     modifier = Modifier.fillMaxWidth(),
                                     shape = RectangleShape,
                                     colors = NavigationDrawerItemDefaults.colors(
-                                        // Keeping your original color choice
                                         selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                                         unselectedContainerColor = Color.Transparent,
-                                        selectedIconColor = MaterialTheme.colorScheme.primary, // Ensure this contrasts with your selectedContainerColor
+                                        selectedIconColor = MaterialTheme.colorScheme.primary,
                                         unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        selectedTextColor = MaterialTheme.colorScheme.primary, // Ensure this contrasts with your selectedContainerColor
+                                        selectedTextColor = MaterialTheme.colorScheme.primary,
                                         unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 )
-                                // Add other bottom navigation items here if you have them (e.g., Logout, About)
                             }
                         }
                     }
