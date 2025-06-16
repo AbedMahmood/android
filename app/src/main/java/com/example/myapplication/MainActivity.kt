@@ -16,9 +16,8 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.outlined.Home // Import outlined icon
-import androidx.compose.material.icons.outlined.Info // Import outlined icon
-import androidx.compose.material.icons.outlined.Settings // Import outlined icon
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -45,13 +44,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import com.example.myapplication.composeables.DrawerHeader
 import com.example.myapplication.composeables.InfoDialog
-import com.example.myapplication.navigation.Screen // Adjusted import
+import com.example.myapplication.navigation.Screen
 import com.example.myapplication.screens.HomeScreenContent
-import com.example.myapplication.screens.Item1ScreenContent
-import com.example.myapplication.screens.Item2ScreenContent
+import com.example.myapplication.screens.SettingScreenContent
 import com.example.myapplication.ui.theme.MyApplicationTheme
-import com.example.myapplication.utils.shareContent // Adjusted import
+import com.example.myapplication.utils.shareContent
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.RectangleShape
+
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -76,98 +81,90 @@ class MainActivity : ComponentActivity() {
                         ModalDrawerSheet(
                             modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
                         ) {
-                            DrawerHeader()
-                            HorizontalDivider()
+                            // Use a Column to arrange items vertically
+                            Column(modifier = Modifier.fillMaxSize()) {
+                                DrawerHeader()
+                                HorizontalDivider()
 
-                            // Home Item
-                            NavigationDrawerItem(
-                                icon = {
-                                    Icon(
-                                        if (currentScreen == Screen.Home) Icons.Filled.Home else Icons.Outlined.Home,
-                                        contentDescription = "Home"
+                                // Home Item
+                                NavigationDrawerItem(
+                                    icon = {
+                                        Icon(
+                                            if (currentScreen == Screen.Home) Icons.Filled.Home else Icons.Outlined.Home,
+                                            contentDescription = "Home"
+                                        )
+                                    },
+                                    label = {
+                                        Text(
+                                            "Home",
+                                            fontWeight = if (currentScreen == Screen.Home) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                    },
+                                    selected = currentScreen == Screen.Home,
+                                    onClick = {
+                                        currentScreen = Screen.Home
+                                        scope.launch { drawerState.close() }
+                                    },
+                                    // Remove Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                                    // Add Modifier.fillMaxWidth() to make the item take the full width
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RectangleShape,
+                                    colors = NavigationDrawerItemDefaults.colors(
+                                        // Keeping your original color choice
+                                        selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                        unselectedContainerColor = Color.Transparent,
+                                        selectedIconColor = MaterialTheme.colorScheme.primary, // Ensure this contrasts with your selectedContainerColor
+                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        selectedTextColor = MaterialTheme.colorScheme.primary, // Ensure this contrasts with your selectedContainerColor
+                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
-                                },
-                                label = {
-                                    Text(
-                                        "Home",
-                                        fontWeight = if (currentScreen == Screen.Home) FontWeight.Bold else FontWeight.Normal
-                                    )
-                                },
-                                selected = currentScreen == Screen.Home, // Keep for accessibility and semantics
-                                onClick = {
-                                    currentScreen = Screen.Home
-                                    scope.launch { drawerState.close() }
-                                },
-                                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                                colors = NavigationDrawerItemDefaults.colors(
-                                    selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), // Example: Light primary background
-                                    unselectedContainerColor = Color.Transparent, // No background when not selected
-                                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
-                            )
 
-                            // Item 1
-                            NavigationDrawerItem(
-                                icon = {
-                                    Icon(
-                                        if (currentScreen == Screen.Item1Screen) Icons.Filled.Info else Icons.Outlined.Info,
-                                        contentDescription = "Item 1"
-                                    )
-                                },
-                                label = {
-                                    Text(
-                                        "Item 1",
-                                        fontWeight = if (currentScreen == Screen.Item1Screen) FontWeight.Bold else FontWeight.Normal
-                                    )
-                                },
-                                selected = currentScreen == Screen.Item1Screen,
-                                onClick = {
-                                    currentScreen = Screen.Item1Screen
-                                    scope.launch { drawerState.close() }
-                                },
-                                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                                colors = NavigationDrawerItemDefaults.colors(
-                                    selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    unselectedContainerColor = Color.Transparent,
-                                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            )
+                                // Add other primary navigation items here if you have them
 
-                            // Item 2
-                            NavigationDrawerItem(
-                                icon = {
-                                    Icon(
-                                        if (currentScreen == Screen.Item2Screen) Icons.Filled.Settings else Icons.Outlined.Settings,
-                                        contentDescription = "Item 2"
+                                // This Spacer will take up all available vertical space,
+                                // pushing the items below it to the bottom.
+                                Spacer(modifier = Modifier.weight(1f))
+
+                                // Optional: Add a divider before the bottom items
+                                HorizontalDivider()
+                                //Spacer(modifier = Modifier.height(8.dp)) // Optional spacing
+
+                                // Settings Item
+                                NavigationDrawerItem(
+                                    icon = {
+                                        Icon(
+                                            if (currentScreen == Screen.SettingScreen) Icons.Filled.Settings else Icons.Outlined.Settings,
+                                            contentDescription = "Settings"
+                                        )
+                                    },
+                                    label = {
+                                        Text(
+                                            "Settings",
+                                            fontWeight = if (currentScreen == Screen.SettingScreen) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                    },
+                                    selected = currentScreen == Screen.SettingScreen,
+                                    onClick = {
+                                        currentScreen = Screen.SettingScreen
+                                        scope.launch { drawerState.close() }
+                                    },
+                                    // Remove Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                                    // Add Modifier.fillMaxWidth() to make the item take the full width
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RectangleShape,
+                                    colors = NavigationDrawerItemDefaults.colors(
+                                        // Keeping your original color choice
+                                        selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                                        unselectedContainerColor = Color.Transparent,
+                                        selectedIconColor = MaterialTheme.colorScheme.primary, // Ensure this contrasts with your selectedContainerColor
+                                        unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        selectedTextColor = MaterialTheme.colorScheme.primary, // Ensure this contrasts with your selectedContainerColor
+                                        unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
-                                },
-                                label = {
-                                    Text(
-                                        "Item 2",
-                                        fontWeight = if (currentScreen == Screen.Item2Screen) FontWeight.Bold else FontWeight.Normal
-                                    )
-                                },
-                                selected = currentScreen == Screen.Item2Screen,
-                                onClick = {
-                                    currentScreen = Screen.Item2Screen
-                                    scope.launch { drawerState.close() }
-                                },
-                                modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
-                                colors = NavigationDrawerItemDefaults.colors(
-                                    selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-                                    unselectedContainerColor = Color.Transparent,
-                                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    selectedTextColor = MaterialTheme.colorScheme.primary,
-                                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
-                            )
+                                // Add other bottom navigation items here if you have them (e.g., Logout, About)
+                            }
                         }
                     }
                 ) {
@@ -179,8 +176,7 @@ class MainActivity : ComponentActivity() {
                                     Text(
                                         when (currentScreen) {
                                             Screen.Home -> "My App - Home"
-                                            Screen.Item1Screen -> "My App - Item 1"
-                                            Screen.Item2Screen -> "My App - Item 2"
+                                            Screen.SettingScreen -> "My App - Settings"
                                         }
                                     )
                                 },
@@ -206,8 +202,7 @@ class MainActivity : ComponentActivity() {
                                     IconButton(onClick = {
                                         val shareText = when (currentScreen) {
                                             Screen.Home -> "Checking out the Home screen of My App!"
-                                            Screen.Item1Screen -> "Exploring Item 1 in My App!"
-                                            Screen.Item2Screen -> "Looking at Item 2 in My App!"
+                                            Screen.SettingScreen -> "Settings screen of My App!"
                                         }
                                         shareContent(
                                             context,
@@ -216,9 +211,6 @@ class MainActivity : ComponentActivity() {
                                         )
                                     }) {
                                         Icon(Icons.Filled.Share, "Share current screen")
-                                    }
-                                    IconButton(onClick = { /* TODO: Handle Settings action */ }) {
-                                        Icon(Icons.Filled.Settings, "Settings")
                                     }
                                     IconButton(onClick = {
                                         showInfoDialog = true
@@ -232,8 +224,7 @@ class MainActivity : ComponentActivity() {
                         Box(modifier = Modifier.padding(innerPadding)) {
                             when (currentScreen) {
                                 Screen.Home -> HomeScreenContent()
-                                Screen.Item1Screen -> Item1ScreenContent()
-                                Screen.Item2Screen -> Item2ScreenContent()
+                                Screen.SettingScreen -> SettingScreenContent()
                             }
                         }
                     }

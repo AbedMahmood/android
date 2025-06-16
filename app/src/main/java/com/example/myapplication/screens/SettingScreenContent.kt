@@ -8,11 +8,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun Item2ScreenContent() {
+fun SettingScreenContent() {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text("Content for Item 2 Screen") // Placeholder content
+        Text("Content for Setting Screen") // Placeholder content
     }
 }
