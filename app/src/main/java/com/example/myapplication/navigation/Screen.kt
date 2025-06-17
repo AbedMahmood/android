@@ -2,5 +2,6 @@ package com.example.myapplication.navigation
 
 enum class Screen {
     Home,
-    SettingScreen
+    Sample,
+    Settings
 }

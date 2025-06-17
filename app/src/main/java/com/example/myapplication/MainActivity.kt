@@ -14,12 +14,14 @@ import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.example.myapplication.composables.MainAppScaffold
+import com.example.myapplication.composables.AppScaffold
 import com.example.myapplication.composables.Drawer
 import com.example.myapplication.composables.InfoDialog
 import com.example.myapplication.navigation.Screen
@@ -35,8 +37,23 @@ class MainActivity : ComponentActivity() {
             MyApplicationTheme {
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val scope = rememberCoroutineScope()
-                var currentScreen by remember { mutableStateOf(Screen.Home) }
+                val backStack = remember { mutableStateListOf(Screen.Home) }
+                val currentScreen = backStack.last()
                 var showInfoDialog by remember { mutableStateOf(false) }
+
+                // Navigation function: push screen on stack if not already on top
+                fun navigateTo(screen: Screen) {
+                    if (backStack.last() != screen) {
+                        backStack.add(screen)
+                    }
+                }
+
+                // Back function: pop from stack if more than one screen
+                fun onBack() {
+                    if (backStack.size > 1) {
+                        backStack.removeAt(backStack.lastIndex)
+                    }
+                }
 
                 // Handle back press for drawer
                 BackHandler(enabled = drawerState.isOpen) {
@@ -50,10 +67,9 @@ class MainActivity : ComponentActivity() {
                     showInfoDialog = false
                 }
 
-                // Default back handler for screens
-                // This will only be active if the drawer is closed and the info dialog is not shown
-                BackHandler(enabled = currentScreen != Screen.Home && !drawerState.isOpen && !showInfoDialog) {
-                    currentScreen = Screen.Home // Navigate to Home screen
+                // Handle back press for navigation stack
+                BackHandler(enabled = backStack.size > 1 && !drawerState.isOpen && !showInfoDialog) {
+                    onBack()
                 }
 
                 if (showInfoDialog) {
@@ -69,8 +85,10 @@ class MainActivity : ComponentActivity() {
                             Drawer(
                                 currentScreen = currentScreen,
                                 onScreenChange = { newScreen ->
-                                    currentScreen = newScreen
-                                    // The drawer closing is handled within DrawerMenuItems
+                                    // Only navigate if not already on this screen
+                                    navigateTo(newScreen)
+                                    // Optionally close the drawer here:
+                                    scope.launch { drawerState.close() }
                                 },
                                 drawerState = drawerState,
                                 scope = scope
@@ -78,11 +96,11 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) {
-                    // Use the new MainAppScaffold composable
-                    MainAppScaffold(
+                    AppScaffold(
                         drawerState = drawerState,
                         currentScreen = currentScreen,
-                        onShowInfoDialog = { showInfoDialog = true }
+                        onShowInfoDialog = { showInfoDialog = true },
+                        //onNavigate = { screen -> navigateTo(screen) } // Pass navigation callback if needed
                     )
                 }
             }

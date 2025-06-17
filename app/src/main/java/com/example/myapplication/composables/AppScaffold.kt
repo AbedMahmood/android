@@ -21,14 +21,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.example.myapplication.navigation.Screen
-import com.example.myapplication.screens.HomeScreenContent
-import com.example.myapplication.screens.SettingScreenContent
+import com.example.myapplication.screens.HomeScreen
+import com.example.myapplication.screens.SampleScreen
+import com.example.myapplication.screens.SettingsScreen
 import com.example.myapplication.utils.shareContent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainAppScaffold(
+fun AppScaffold(
     drawerState: DrawerState,
     currentScreen: Screen,
     onShowInfoDialog: () -> Unit // Callback to show the info dialog
@@ -44,7 +45,8 @@ fun MainAppScaffold(
                     Text(
                         when (currentScreen) {
                             Screen.Home -> "My App - Home"
-                            Screen.SettingScreen -> "My App - Settings"
+                            Screen.Settings -> "My App - Settings"
+                            Screen.Sample -> "My App - Sample"
                         }
                     )
                 },
@@ -70,7 +72,8 @@ fun MainAppScaffold(
                     IconButton(onClick = {
                         val shareText = when (currentScreen) {
                             Screen.Home -> "Checking out the Home screen of My App!"
-                            Screen.SettingScreen -> "Settings screen of My App!"
+                            Screen.Settings -> "Settings screen of My App!"
+                            Screen.Sample -> "Sample screen of My App!"
                         }
                         shareContent(
                             context,
@@ -89,8 +92,9 @@ fun MainAppScaffold(
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             when (currentScreen) {
-                Screen.Home -> HomeScreenContent()
-                Screen.SettingScreen -> SettingScreenContent()
+                Screen.Home -> HomeScreen()
+                Screen.Settings -> SettingsScreen()
+                Screen.Sample -> SampleScreen()
                 // Add more screens here if needed
             }
         }

@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
@@ -89,6 +91,37 @@ fun Drawer(
             )
         )
 
+        // Sample Item
+        NavigationDrawerItem(
+            icon = {
+                Icon(
+                    if (currentScreen == Screen.Sample) Icons.Filled.Info else Icons.Outlined.Info,
+                    contentDescription = "Sample"
+                )
+            },
+            label = {
+                Text(
+                    "Sample",
+                    fontWeight = if (currentScreen == Screen.Sample) FontWeight.Bold else FontWeight.Normal
+                )
+            },
+            selected = currentScreen == Screen.Sample,
+            onClick = {
+                onScreenChange(Screen.Sample)
+                scope.launch { drawerState.close() }
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RectangleShape,
+            colors = NavigationDrawerItemDefaults.colors(
+                selectedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                unselectedContainerColor = Color.Transparent,
+                selectedIconColor = MaterialTheme.colorScheme.primary,
+                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                selectedTextColor = MaterialTheme.colorScheme.primary,
+                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        )
+
         // Add other menu items here if needed, for example:
         // NavigationDrawerItem(...)
 
@@ -100,19 +133,19 @@ fun Drawer(
         NavigationDrawerItem(
             icon = {
                 Icon(
-                    if (currentScreen == Screen.SettingScreen) Icons.Filled.Settings else Icons.Outlined.Settings,
+                    if (currentScreen == Screen.Settings) Icons.Filled.Settings else Icons.Outlined.Settings,
                     contentDescription = "Settings"
                 )
             },
             label = {
                 Text(
                     "Settings",
-                    fontWeight = if (currentScreen == Screen.SettingScreen) FontWeight.Bold else FontWeight.Normal
+                    fontWeight = if (currentScreen == Screen.Settings) FontWeight.Bold else FontWeight.Normal
                 )
             },
-            selected = currentScreen == Screen.SettingScreen,
+            selected = currentScreen == Screen.Settings,
             onClick = {
-                onScreenChange(Screen.SettingScreen)
+                onScreenChange(Screen.Settings)
                 scope.launch { drawerState.close() }
             },
             modifier = Modifier.fillMaxWidth(),

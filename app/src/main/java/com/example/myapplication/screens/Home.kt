@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import kotlin.random.Random
 
 @Composable
-fun HomeScreenContent(modifier: Modifier = Modifier) { // Added modifier parameter
+fun HomeScreen(modifier: Modifier = Modifier) { // Added modifier parameter
     var borderColor by remember { mutableStateOf(Color.Green) } // Changed initial color for differentiation
 
     // Function to generate a random color
